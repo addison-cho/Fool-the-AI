@@ -13,15 +13,9 @@ from PyQt5.QtCore import *
 WINDOW_WIDTH = 1600
 WINDOW_HEIGHT = 900
 
-BOX_WIDTH = 640
-BOX_HEIGHT = 360
+BOX_WIDTH = 600
+BOX_HEIGHT = 338
 THRESHOLD = .5
-
-def exception_hook(exc_type, exc_value, exc_traceback):
-    print("aksdfj", exc_type, exc_value)
-    traceback.print_tb(exc_traceback, limit=None, file=sys.stdout)
-
-sys.excepthook = exception_hook
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -57,11 +51,11 @@ class MainWindow(QMainWindow):
                             background-color : #073b4c;
                             color: #FFFFFF;
                             font-weight: bold;
-                            height: 30px;
+                            height: 25px;
                             border: 5px solid #2e7f99;
                             padding: 2px;
-                            margin: 10px;
-                            font-size: 25px;
+                            margin: 2px;
+                            font-size: 20px;
                         }
                         QPushButton::hover
                         {
@@ -97,13 +91,13 @@ class MainWindow(QMainWindow):
         self.reset_button.hide()
     
         self.text_label = QLabel("Take A Picture to Train the AI\n(0/3)", self)
-        self.text_label.setFont(QFont("Helvetica", 40))
+        self.text_label.setFont(QFont("Helvetica", 28))
         self.text_label.setStyleSheet("color: #FFFFFF;"
                                       "background-color: #073b4c;"
                                       "font-weight: bold;"
                                       "padding: 2px;"
-                                      "margin: 5px;"
-                                      "height: 45px")
+                                      "margin: 2px;"
+                                      "height: 30px")
         
         self.text_label.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
 
