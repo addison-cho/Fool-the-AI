@@ -1,9 +1,3 @@
-"""
-TO-DO:
-- padding
-- fix scaling
-"""
-
 import sys
 import os
 import cv2
@@ -18,6 +12,9 @@ from PyQt5.QtCore import *
 
 WINDOW_WIDTH = 1600
 WINDOW_HEIGHT = 900
+
+BOX_WIDTH = 640
+BOX_HEIGHT = 360
 THRESHOLD = .5
 
 def exception_hook(exc_type, exc_value, exc_traceback):
@@ -33,7 +30,11 @@ class MainWindow(QMainWindow):
         self.setGeometry(0, 0, 1600, 900)
         self.createLayout()
 
-        self.Worker1 = Worker1()
+        self.cap = cv2.VideoCapture(0)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, WINDOW_WIDTH)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, WINDOW_HEIGHT)
+
+        self.Worker1 = Worker1(self.cap)
         self.Worker1.start()
         self.Worker1.ImageUpdate.connect(self.ImageUpdateSlot)    
 
@@ -75,6 +76,8 @@ class MainWindow(QMainWindow):
 
 
     def closeEvent(self, event):
+        print("Closing application...")
+
         self.Worker1.stop()
         self.delete_pictures()
         event.accept()
@@ -84,7 +87,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
         
         self.camera_label = QLabel(self)
-        self.camera_label.setFixedSize(320, 240)
+        self.camera_label.setFixedSize(BOX_WIDTH, BOX_HEIGHT)
         self.camera_label.setStyleSheet("border: 10px solid purple;")
         
         self.camera_button = QPushButton("Click Here to Take A Picture", self)
@@ -109,10 +112,10 @@ class MainWindow(QMainWindow):
         self.label3 = QLabel(self)
         self.label4 = QLabel(self)
         
-        self.label1.setFixedSize(320, 240)
-        self.label2.setFixedSize(320, 240)
-        self.label3.setFixedSize(320, 240)
-        self.label4.setFixedSize(320, 240)
+        self.label1.setFixedSize(BOX_WIDTH, BOX_HEIGHT)
+        self.label2.setFixedSize(BOX_WIDTH, BOX_HEIGHT)
+        self.label3.setFixedSize(BOX_WIDTH, BOX_HEIGHT)
+        self.label4.setFixedSize(BOX_WIDTH, BOX_HEIGHT)
 
         self.label1.setStyleSheet("background-color: #ef476f;"
                                   "border: 10px solid #ef476f;")
@@ -140,14 +143,12 @@ class MainWindow(QMainWindow):
         self.camera_label.raise_()
 
     def ImageUpdateSlot(self, img):
-        pixmap = QPixmap.fromImage(img).scaled(self.camera_label.size(), Qt.KeepAspectRatio)
-        self.camera_label.setPixmap(pixmap)
+        self.camera_label.setPixmap(QPixmap.fromImage(img))
 
     def capture_image(self):
         print("capture image")
-        global cap 
 
-        ret, frame = cap.read()
+        ret, frame = self.cap.read()
         if ret:
             try:
                 path = 'reference_image_' + str(self.count+1) + '.jpg'
@@ -156,11 +157,11 @@ class MainWindow(QMainWindow):
                 self.images.append(embedding[0]['embedding'])
                 
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                frameFlip = cv2.flip(frame, 1)
-                frameConvert = QImage(frameFlip.data, frameFlip.shape[1], frameFlip.shape[0], QImage.Format_RGB888)
-                #pic = frameConvert.scaled(640, 480, Qt.KeepAspectRatio)
+                flipped_frame = cv2.flip(frame, 1)
+                convert_frame = QImage(flipped_frame.data, flipped_frame.shape[1], flipped_frame.shape[0], QImage.Format_RGB888)
+                pic = convert_frame.scaled(BOX_WIDTH, BOX_HEIGHT, Qt.KeepAspectRatio)
                 
-                pixmap = QPixmap(path)
+                pixmap = QPixmap(pic)
                 self.grid.removeWidget(self.camera_label)
 
                 self.text_label.setText(f"Take A Picture to Train the AI\n({self.count + 1}/3)")
@@ -182,14 +183,21 @@ class MainWindow(QMainWindow):
                 else:
                     self.label4.setPixmap(pixmap)
                     self.compare_faces(True)
+                
+                print("Worker1 ThreadActive:", self.Worker1.ThreadActive)
                     
-            except:
-                print("error")
+            except Exception as e:
+                print("Error:", e)
                 # face not found
                 if self.count < self.MAX_IMG:
                     self.msg.exec_()  
                 else:
-                    pixmap = QPixmap(path)
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    flipped_frame = cv2.flip(frame, 1)
+                    convert_frame = QImage(flipped_frame.data, flipped_frame.shape[1], flipped_frame.shape[0], QImage.Format_RGB888)
+                    pic = convert_frame.scaled(BOX_WIDTH, BOX_HEIGHT, Qt.KeepAspectRatio)
+                    pixmap = QPixmap(pic)
+                    
                     self.label4.setPixmap(pixmap)
                     self.compare_faces(False)
 
@@ -256,27 +264,32 @@ class MainWindow(QMainWindow):
 
 class Worker1(QThread):
     ImageUpdate = pyqtSignal(QImage)
+
+    def __init__(self, cap):
+        super().__init__()
+        self.cap = cap
+    
     def run(self):
+        print("Worker1 thread started.")
         self.ThreadActive = True
-        
-        global cap
-        cap = cv2.VideoCapture(0)
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, WINDOW_WIDTH)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, WINDOW_HEIGHT)
 
         while self.ThreadActive:
-            ret, frame = cap.read()
+            ret, frame = self.cap.read()
             if ret:
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                frameFlip = cv2.flip(frame, 1)
-                frameConvert = QImage(frameFlip.data, frameFlip.shape[1], frameFlip.shape[0], QImage.Format_RGB888)
-                self.ImageUpdate.emit(frameConvert)
+                flipped_frame = cv2.flip(frame, 1)
+                convert_frame = QImage(flipped_frame.data, flipped_frame.shape[1], flipped_frame.shape[0], QImage.Format_RGB888)
+                pic = convert_frame.scaled(BOX_WIDTH, BOX_HEIGHT, Qt.KeepAspectRatio)
+
+                self.ImageUpdate.emit(pic)
 
     def stop(self):
         self.ThreadActive = False
-        cap.release()
+        self.cap.release()
+        print("Worker1 thread ended.")
 
 def main():
+    print("Starting application...")
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
