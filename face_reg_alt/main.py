@@ -16,15 +16,21 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 960
+WINDOW_WIDTH = 1600
+WINDOW_HEIGHT = 900
 THRESHOLD = .5
+
+def exception_hook(exc_type, exc_value, exc_traceback):
+    print("aksdfj", exc_type, exc_value)
+    traceback.print_tb(exc_traceback, limit=None, file=sys.stdout)
+
+sys.excepthook = exception_hook
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Fool the AI")
-        self.setGeometry(0, 0, 640, 480)
+        self.setGeometry(0, 0, 1600, 900)
         self.createLayout()
 
         self.Worker1 = Worker1()
@@ -58,23 +64,27 @@ class MainWindow(QMainWindow):
                         }
                         QPushButton::hover
                         {
+                            color: #adadad;
                             background-color : #052833;
                         }
                         QPushButton::pressed
                         {
+                            color: #adadad;
                             background-color : #03181f;
                         }""")
 
 
     def closeEvent(self, event):
-        Worker1.stop(self)
+        self.Worker1.stop()
         self.delete_pictures()
+        event.accept()
         
     def createLayout(self):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         
         self.camera_label = QLabel(self)
+        self.camera_label.setFixedSize(320, 240)
         self.camera_label.setStyleSheet("border: 10px solid purple;")
         
         self.camera_button = QPushButton("Click Here to Take A Picture", self)
@@ -84,12 +94,13 @@ class MainWindow(QMainWindow):
         self.reset_button.hide()
     
         self.text_label = QLabel("Take A Picture to Train the AI\n(0/3)", self)
-        self.text_label.setFont(QFont("Helvetica", 45))
+        self.text_label.setFont(QFont("Helvetica", 40))
         self.text_label.setStyleSheet("color: #FFFFFF;"
                                       "background-color: #073b4c;"
                                       "font-weight: bold;"
                                       "padding: 2px;"
-                                      "margin: 10px;")
+                                      "margin: 5px;"
+                                      "height: 45px")
         
         self.text_label.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
 
@@ -98,10 +109,10 @@ class MainWindow(QMainWindow):
         self.label3 = QLabel(self)
         self.label4 = QLabel(self)
         
-        self.label1.setFixedSize(640, 480)
-        self.label2.setFixedSize(640, 480)
-        self.label3.setFixedSize(640, 480)
-        self.label4.setFixedSize(640, 480)
+        self.label1.setFixedSize(320, 240)
+        self.label2.setFixedSize(320, 240)
+        self.label3.setFixedSize(320, 240)
+        self.label4.setFixedSize(320, 240)
 
         self.label1.setStyleSheet("background-color: #ef476f;"
                                   "border: 10px solid #ef476f;")
@@ -129,7 +140,8 @@ class MainWindow(QMainWindow):
         self.camera_label.raise_()
 
     def ImageUpdateSlot(self, img):
-        self.camera_label.setPixmap(QPixmap.fromImage(img))
+        pixmap = QPixmap.fromImage(img).scaled(self.camera_label.size(), Qt.KeepAspectRatio)
+        self.camera_label.setPixmap(pixmap)
 
     def capture_image(self):
         print("capture image")
@@ -138,9 +150,8 @@ class MainWindow(QMainWindow):
         ret, frame = cap.read()
         if ret:
             try:
-                
                 path = 'reference_image_' + str(self.count+1) + '.jpg'
-                cv2.imwrite(path, frame) # frameFlip sithe actual numpy array
+                cv2.imwrite(path, frame) 
                 embedding = DeepFace.represent(img_path=path, model_name="ArcFace")
                 self.images.append(embedding[0]['embedding'])
                 
@@ -259,11 +270,11 @@ class Worker1(QThread):
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 frameFlip = cv2.flip(frame, 1)
                 frameConvert = QImage(frameFlip.data, frameFlip.shape[1], frameFlip.shape[0], QImage.Format_RGB888)
-                pic = frameConvert.scaled(640, 480, Qt.KeepAspectRatio)
-                self.ImageUpdate.emit(pic)
+                self.ImageUpdate.emit(frameConvert)
 
     def stop(self):
         self.ThreadActive = False
+        cap.release()
 
 def main():
     app = QApplication(sys.argv)
