@@ -1,4 +1,10 @@
 __pycache__
 /.stestr
 settings.json
-venv/
+venv
+build
+dist
+files
+scaling.py
+main.spec
+/
