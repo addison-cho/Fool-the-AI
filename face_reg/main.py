@@ -44,7 +44,18 @@ class MainWindow(QMainWindow):
         self.reset_button = QPushButton("New Game", self)
         self.retry_button.hide()
         self.reset_button.hide()
-    
+
+        # adding shadow to make buttons look clickable
+        def add_shadow(widget):
+            shadow = QGraphicsDropShadowEffect()
+            shadow.setBlurRadius(10)
+            shadow.setOffset(5, 5)
+            widget.setGraphicsEffect(shadow)
+
+        add_shadow(self.camera_button)
+        add_shadow(self.retry_button)
+        add_shadow(self.reset_button)
+
         # text bar
         self.text_label = QLabel("Take A Picture to Train the AI\n(0/3)", self)
         self.text_label.setFont(QFont("Helvetica", 28))
@@ -86,9 +97,10 @@ class MainWindow(QMainWindow):
         self.grid.setRowStretch(0, 1)
         self.grid.setColumnStretch(1, 1)
         self.grid.setRowStretch(1, 1)
+        self.grid.setSizeConstraint(QLayout.SetFixedSize)
         
-        self.vbox.addWidget(self.text_label, stretch=0)
-        self.vbox.addLayout(self.grid, stretch=5)
+        self.vbox.addWidget(self.text_label, stretch=1)
+        self.vbox.addLayout(self.grid, stretch=0)
         self.vbox.addLayout(self.hbox, stretch=1)
         
         self.grid.addWidget(self.camera_label, 0, 0)
@@ -101,6 +113,9 @@ class MainWindow(QMainWindow):
         self.hbox.addWidget(self.camera_button, stretch=2)
         self.hbox.addWidget(self.retry_button)
         self.hbox.addWidget(self.reset_button)
+        self.camera_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.retry_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.reset_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         central_widget.setLayout(self.vbox)
 
@@ -133,14 +148,13 @@ class MainWindow(QMainWindow):
         self.msg.setIcon(QMessageBox.Critical)
         self.msg.setStandardButtons(QMessageBox.Retry)
         self.msg.setFixedSize(800, 800)
-
+#073b4c
         self.setStyleSheet("""QPushButton
                         {
-                            background-color : #073b4c;
+                            background-color : #2e7f99;
                             color: #FFFFFF;
                             font-weight: bold;
                             height: 25px;
-                            border: 5px solid #2e7f99;
                             padding: 2px;
                             margin: 2px;
                             font-size: 20px;
@@ -155,6 +169,7 @@ class MainWindow(QMainWindow):
                             color: #adadad;
                             background-color : #03181f;
                         }""")
+
 
     # closing application: stop thread and delete pictures
     def closeEvent(self, event):
