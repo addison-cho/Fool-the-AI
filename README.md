@@ -10,3 +10,9 @@ The game prompts the user to take four photos: three for training, and on the la
 Programming Language: Python  
 Libraries: DeepFace, OpenCV, PyQt5.  
 (Tensorflow is a requirement, and included in requirements.txt. Later versions of Tensorflow work fine; you will just need to install tf-keras as well. Tensorflow (and consequently Keras) is currently downgraded to 2.12 due to conflicts when converting the py file to an executable.)
+
+**Good Resources I Used for this Project**
+
+Face API Documentation: https://justadudewhohacks.github.io/face-api.js/docs/index.html 
+Face API Starter Guide: https://itnext.io/face-api-js-javascript-api-for-face-recognition-in-the-browser-with-tensorflow-js-bcc2a6c4cf07
+Article on HTML Live Video Feed: https://srivastavayushmaan1347.medium.com/how-to-access-and-live-stream-camera-using-javascript-210e1b9a739d
