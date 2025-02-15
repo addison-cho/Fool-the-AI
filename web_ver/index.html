@@ -7,9 +7,12 @@
   <!-- Import Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    title {
-      font-size: 3vh;
+    #title {
+      font-size: 5vh;
+      font-weight: bold;
       color: #02455c;
+      text-align: left;  
+      width: 100%;   
     }
     /* Global reset and box-sizing */
     * {
@@ -44,7 +47,7 @@
       margin: 1vh;
     }
     button {
-      font-size: 20px;
+      font-size: 3vh;
       padding: 10px 20px;
       margin: 10px;
       cursor: pointer;
@@ -53,6 +56,7 @@
       background-color: rgb(29, 172, 255);
       color: #fff;
       transition: background-color 0.2s ease;
+      font-weight: bold;
     }
     button:hover {
       background-color: rgb(20, 150, 235);
@@ -62,7 +66,7 @@
     }
     /* Message styling */
     #message {
-      font-size: 1.5vh;
+      font-size: 4vh;
       margin: 1vh;
       color: #02455c;
       font-weight: bold;
@@ -73,18 +77,18 @@
       justify-content: center;
       gap: 2vh;
       margin: 1vh auto;
-      font-size: 1.2vh;
+      font-size: 2.5vh;
       margin: 1vh;
       color: #02455c;
       font-weight: bold;
     }
     .final-container {
       display: flex;
-      justify-content: center;
+      justify-content: flex-end; 
       gap: 20px;
-      margin: 1vh auto;
-      font-size: 1.2vh;
-      margin: 1vh;
+      width: 100%;           
+      margin: 1vh;    
+      font-size: 2.5vh;
       color: #02455c;
       font-weight: bold;
     }
@@ -96,20 +100,19 @@
       background: #eee;
       text-align: center;
       margin: auto;
-      /* No fixed height/aspect ratio here so that content flows naturally */
     }
     /* Individual reference image colors */
-    #trainingBox1 {
-      border-color: #ff836d;       /* Tomato */
-      background-color: #FFDAB9;    /* Peach Puff */
+    #referenceBox1 {
+      border-color: #ff836d;   
+      background-color: #FFDAB9; 
     }
-    #trainingBox2 {
-      border-color: #ffcf68;       /* Medium Sea Green */
-      background-color: #fff0c7;    /* Honeydew */
+    #referenceBox2 {
+      border-color: #ffcf68;     
+      background-color: #fff0c7;  
     }
-    #trainingBox3 {
-      border-color: #41ffc0;       /* Dodger Blue */
-      background-color: #befff6;    /* Lavender */
+    #referenceBox3 {
+      border-color: #41ffc0;     
+      background-color: #befff6; 
     }
     /* Inner container for the image: maintains 16:9 ratio */
     .img-container {
@@ -126,7 +129,7 @@
     /* Text below the image */
     .distance {
       margin: 1vh;
-      font-size: 1.2vh;
+      font-size: 2.5vh;
       color: #02455c;
     }
     /* Hide .distance if empty to avoid unwanted white space */
@@ -135,65 +138,68 @@
     }
     /* Final image box: make it larger */
     .final-container .image-box {
-      width: 50vw;
+      width: 30vh;
       max-width: 500px;
     }
   </style>
 </head>
 <body>
-  <title id="title">Fool the AI!</title>
+  <div id="title">Fool the AI! (A Facial Recognition Demo)</div>
 
   <!-- Live video feed -->
   <video id="live-stream" autoplay muted></video>
 
+  <!-- Status message -->
+  <div id="message">Please capture a reference image.</div>
+  
   <!-- Capture controls -->
   <div id="controls">
     <button id="captureBtn">Take a Picture!</button>
   </div>
 
-  <!-- Status message -->
-  <div id="message">Please capture a reference image.</div>
 
   <!-- Reference images container -->
   <div class="reference-container">
-    <div id="trainingBox1" class="image-box">
+    <div id="referenceBox1" class="image-box">
       Reference Image 1
       <div class="img-container">
         <!-- Image will be inserted here -->
       </div>
       <span class="distance"></span>
     </div>
-    <div id="trainingBox2" class="image-box">
+    <div id="referenceBox2" class="image-box">
       Reference Image 2
       <div class="img-container">
         <!-- Image will be inserted here -->
       </div>
       <span class="distance"></span>
     </div>
-    <div id="trainingBox3" class="image-box">
+    <div id="referenceBox3" class="image-box">
       Reference Image 3
       <div class="img-container">
         <!-- Image will be inserted here -->
       </div>
       <span class="distance"></span>
     </div>
-  </div>
-
-  <!-- Final image container (placed below the reference images) -->
-  <div class="final-container">
-    <div id="testBox" class="image-box">
-      Final Image
-      <div class="img-container">
-        <!-- Image will be inserted here -->
+    <!-- Final image container-->
+      <div class="final-container">
+        <div id="testBox" class="image-box">
+          Final Image
+          <div class="img-container">
+            <!-- Image will be inserted here -->
+          </div>
+          <span class="distance"></span>
+        </div>
       </div>
-      <span class="distance"></span>
-    </div>
   </div>
 
-  <!-- Load face-api.js from CDN -->
+  
+
+  <!-- Load face-api.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/dist/face-api.min.js"></script>
   <!-- External JavaScript file -->
   <script defer src="main.js"></script>
+  <!-- Free confetti animation ;) -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </body>
 </html>

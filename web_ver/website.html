@@ -4,111 +4,232 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Fool the AI!</title>
+  <!-- Import Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    #title {
+      font-size: 5vh;
+      font-weight: bold;
+      color: #02455c;
+    }
+    /* Global reset and box-sizing */
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+    /* Body styling */
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Roboto', sans-serif;
       text-align: center;
-      background-color: #f5f5f5;
+      background: linear-gradient(135deg, #AEDFF7, #D7C0F2);
       padding: 20px;
     }
-
+    /* Video styling */
     video {
-      border: 7px solid rgb(29, 172, 255);
+      border: .6vh solid rgb(29, 172, 255);
       border-radius: 4px;
       background: #000;
+      max-width: 640px;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      margin: 1vh auto;
+      display: block;
     }
-
+    /* Button styling */
     #controls {
-      margin: 20px;
+      margin: 1vh;
     }
-
     button {
       font-size: 20px;
       padding: 10px 20px;
       margin: 10px;
       cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: rgb(29, 172, 255);
+      color: #fff;
+      transition: background-color 0.2s ease;
     }
-
+    button:hover {
+      background-color: rgb(20, 150, 235);
+    }
+    button:active {
+      background-color: rgb(15, 130, 215);
+    }
+    /* Message styling */
     #message {
-      font-size: 24px;
-      margin: 20px;
-      color: #063544;
+      font-size: 1.5vh;
+      margin: 1vh;
+      color: #02455c;
       font-weight: bold;
     }
-
-    .image-box {
-      width: 10vw;
-      border: 7px solid #67a4ff;
-      margin: 10px;
-      display: inline-block;
-      background: #eee;
-      overflow: hidden;
-      text-align: center;
+    /* Container styling for image boxes */
+    .reference-container {
+      display: inline-flex; /* shrink to fit its children */
+      justify-content: center;
+      gap: 2vh;
+      margin: 1vh auto;
+      font-size: 1.2vh;
+      margin: 1vh;
+      color: #02455c;
+      font-weight: bold;
     }
-
-    .image-box img {
+    .final-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 1vh auto;
+      font-size: 1.2vh;
+      margin: 1vh;
+      color: #02455c;
+      font-weight: bold;
+    }
+    /* Image box styling */
+    .image-box {
+      width: 30vw;
+      max-width: 300px;
+      border: 0.5vh solid #67a4ff;
+      background: #eee;
+      text-align: center;
+      margin: auto;
+      /* No fixed height/aspect ratio here so that content flows naturally */
+    }
+    /* Individual reference image colors */
+    #referenceBox1 {
+      border-color: #ff836d;       /* Tomato */
+      background-color: #FFDAB9;    /* Peach Puff */
+    }
+    #referenceBox2 {
+      border-color: #ffcf68;       /* Medium Sea Green */
+      background-color: #fff0c7;    /* Honeydew */
+    }
+    #referenceBox3 {
+      border-color: #41ffc0;       /* Dodger Blue */
+      background-color: #befff6;    /* Lavender */
+    }
+    /* Inner container for the image: maintains 16:9 ratio */
+    .img-container {
       width: 100%;
-      height: auto; /* Let the image size adjust naturally */
+      aspect-ratio: 16/9;
+      overflow: hidden;
+    }
+    .img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       display: block;
     }
-
+    /* Text below the image */
     .distance {
-      margin-top: 5px;
-      font-size: 16px;
-      color: #333;
+      margin: 1vh;
+      font-size: 1.2vh;
+      color: #02455c;
     }
-
+    /* Hide .distance if empty to avoid unwanted white space */
+    .distance:empty {
+      display: none;
+    }
+    /* Final image box: make it larger */
+    .final-container .image-box {
+      width: 50vw;
+      max-width: 500px;
+    }
   </style>
 </head>
 <body>
-  <h1 id="title">Fool the AI!</h1>
+  <div id="title">Fool the AI!</div>
 
-  <video id="live-stream" width="640" height="360" autoplay muted></video>
+  <!-- Live video feed -->
+  <video id="live-stream" autoplay muted></video>
 
+  <!-- Capture controls -->
   <div id="controls">
     <button id="captureBtn">Take a Picture!</button>
-    
   </div>
 
-  <div id="message">Please capture a training image.</div>
+  <!-- Status message -->
+  <div id="message">Please capture a reference image.</div>
 
-  <div>
-    <div id="trainingBox1" class="image-box">Training Image 1</div>
-    <div id="trainingBox2" class="image-box">Training Image 2</div>
-    <div id="trainingBox3" class="image-box">Training Image 3</div>
-    <div id="testBox" class="image-box">Test Image</div>
+  <!-- Reference images container -->
+  <div class="reference-container">
+    <div id="referenceBox1" class="image-box">
+      Reference Image 1
+      <div class="img-container">
+        <!-- Image will be inserted here -->
+      </div>
+      <span class="distance"></span>
+    </div>
+    <div id="referenceBox2" class="image-box">
+      Reference Image 2
+      <div class="img-container">
+        <!-- Image will be inserted here -->
+      </div>
+      <span class="distance"></span>
+    </div>
+    <div id="referenceBox3" class="image-box">
+      Reference Image 3
+      <div class="img-container">
+        <!-- Image will be inserted here -->
+      </div>
+      <span class="distance"></span>
+    </div>
   </div>
 
+  <!-- Final image container (placed below the reference images) -->
+  <div class="final-container">
+    <div id="testBox" class="image-box">
+      Final Image
+      <div class="img-container">
+        <!-- Image will be inserted here -->
+      </div>
+      <span class="distance"></span>
+    </div>
+  </div>
+
+  <!-- Load face-api.js from CDN -->
   <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/dist/face-api.min.js"></script>
+  <!-- External JavaScript file -->
+  <script>
 
-  <script>let trainingDescriptors = []; // Array to store up to 3 training descriptors
-let trainingImageURLs = [];
+let referenceDescriptors = []; 
+let referenceImageURLs = []; 
 
-const THRESHOLD = 0.6;
+const THRESHOLD = 0.5;
 
 const video = document.getElementById('live-stream');
 const captureBtn = document.getElementById('captureBtn');
 const messageEl = document.getElementById('message');
-const trainingBoxes = [
-    document.getElementById('trainingBox1'),
-    document.getElementById('trainingBox2'),
-    document.getElementById('trainingBox3')
+const referenceBoxes = [
+    document.getElementById('referenceBox1'),
+    document.getElementById('referenceBox2'),
+    document.getElementById('referenceBox3')
 ];
 const testBox = document.getElementById('testBox');
 const title = document.getElementById('title');
 
+
+// Math for normalizing a vector
 function normalizeDescriptor(descriptor) {
     const norm = Math.sqrt(descriptor.reduce((sum, val) => sum + val * val, 0));
     return Float32Array.from(descriptor, val => val / norm);
 }
 
+
+//face-api.js
 async function loadModels() {
     await faceapi.nets.ssdMobilenetv1.loadFromUri('./wp-content/models/ssd_mobilenetv1');
     await faceapi.nets.faceLandmark68Net.loadFromUri('./wp-content/models/face_landmark_68');
     await faceapi.nets.faceRecognitionNet.loadFromUri('./wp-content/models/face_recognition');
+
     console.log("Models loaded");
 }
 
+// Live video feed
 async function startVideo() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         // Requests access to camera
@@ -126,6 +247,7 @@ async function startVideo() {
     }
 }
 
+// Captures an image with the same dimensions as the camera. Draws it onto the canvas.
 async function captureImage() {
     const canvas = document.createElement('canvas');
     canvas.width = video.videoWidth;
@@ -135,46 +257,61 @@ async function captureImage() {
     return canvas;
 }
 
+// Button Clicked Event: Taking a Picture
 captureBtn.addEventListener('click', async () => {
     const canvas = await captureImage();
     const detection = await faceapi
+    // Detects the face in the bounding box w/ the highest probability of containing a face
+    // Uses canvas img as input and Tiny Face Detector for face detection.
     .detectSingleFace(canvas, new faceapi.SsdMobilenetv1Options())
     .withFaceLandmarks()
     .withFaceDescriptor();
 
+    // Alert for when no face is found
     if (!detection) {
         alert("No face detected! Please try again.");
         return;
-    } else; {
+    } else {
+        console.log("Detection:", detection);
+
         console.log("Descriptor length:", detection.descriptor.length);
         console.log("Descriptor sample:", detection.descriptor.slice(0, 5));
+
+        foo = Math.sqrt(detection.descriptor.reduce((sum, val) => sum + val * val, 0));
+        console.log(foo);
     }
 
-    const normalizedDescriptor = normalizeDescriptor(detection.descriptor);
+
+    // Normalize the face descriptor for consistent comparisons (able to scale).
+    //const normalizedDescriptor = normalizeDescriptor(detection.descriptor);
+    const normalizedDescriptor = detection.descriptor;
     const dataURL = canvas.toDataURL('image/jpeg');
 
-    if (trainingDescriptors.length < 3) {
-        trainingDescriptors.push(normalizedDescriptor);
-        trainingImageURLs.push(dataURL);
+    // Math Break! Normalizing vectors scales the vector to have a magnitude of one, while preserving its direction.
+    // A magnitude of one means easy scaling, which means easy comparisons.
 
-        trainingBoxes[trainingDescriptors.length - 1].innerHTML =
+    if (referenceDescriptors.length < 3) {
+        // Add normalized reference descriptor to the list for future use.
+        referenceDescriptors.push(normalizedDescriptor);
+        referenceImageURLs.push(dataURL);
+
+        // Update HTML
+        referenceBoxes[referenceDescriptors.length - 1].innerHTML =
         `<img src="${canvas.toDataURL('image/jpeg')}" width="100%" height="100%">`;
-        if (trainingDescriptors.length < 3) {
-            messageEl.innerText = `Training image captured. Please capture ${3 - trainingDescriptors.length} more training image${3 - trainingDescriptors.length > 1 ? 's' : ''}.`;
+        if (referenceDescriptors.length < 3) {
+            messageEl.innerText = `Reference image captured. Please capture ${3 - referenceDescriptors.length} more reference image${3 - referenceDescriptors.length > 1 ? 's' : ''}.`;
         } else {
-            messageEl.innerText = "All training images captured. Now try to fool the AI!";
+            messageEl.innerText = "All reference images captured. Now try to fool the AI!";
         }
 
     } else {
         testBox.innerHTML = `<img src="${canvas.toDataURL('image/jpeg')}" width="100%" height="100%">`;
 
-        const labeledDescriptor = new faceapi.LabeledFaceDescriptors("User", trainingDescriptors);
-        const faceMatcher = new faceapi.FaceMatcher([labeledDescriptor], THRESHOLD);
-        const bestMatch = faceMatcher.findBestMatch(normalizedDescriptor);
-
+        // Run Test Image against all Reference Images. Majority must match (2/3 at least).
+        // Distance is scale of 0 to 2 since our vectors are normalized (magnitude = 1)
         let matchCount = 0;
         const distances = [];
-        trainingDescriptors.forEach(desc => {
+        referenceDescriptors.forEach(desc => {
             const distance = faceapi.euclideanDistance(desc, normalizedDescriptor);
             distances.push(distance);
             if (distance < THRESHOLD) {
@@ -182,23 +319,57 @@ captureBtn.addEventListener('click', async () => {
             }
         });
 
-        trainingBoxes.forEach((box, idx) => {
+        referenceBoxes.forEach((box, idx) => {
             box.innerHTML = `
-              <img src="${trainingImageURLs[idx]}" width="100%" height="100%">
+              <img src="${referenceImageURLs[idx]}" width="100%" height="100%">
               <div class="distance">Distance: ${distances[idx].toFixed(2)}</div>
             `;
           });
 
         if (matchCount >= 2) {
-            messageEl.innerText = `I recognize you! Majority match count: ${matchCount} out of 3.`;
+            messageEl.innerText = `I recognize you! Match count: ${matchCount} out of 3.`;
         } else {
             messageEl.innerText = `You fooled me! Not enough matches (only ${matchCount} out of 3).`;
-        }
+            launchConfetti();
+        }        
         
         showFinalButtons();
-        }
+        
+    }
 });
 
+function launchConfetti() {
+    const duration = 5 * 1000; // 5 seconds
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+  
+    function randomInRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+  
+    const interval = setInterval(function() {
+      const timeLeft = animationEnd - Date.now();
+  
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+      const particleCount = 50 * (timeLeft / duration);
+      confetti(Object.assign({}, defaults, { 
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 }
+      }));
+    }, 250);
+  }
+
+window.addEventListener('load', async () => {
+    await loadModels();
+
+    startVideo();
+    await warmUpModel();
+
+});
+
+// When game is over, offer retry and restart buttons. 
 function showFinalButtons() {
     document.getElementById('controls').innerHTML = `
         <button id="retryBtn">Retry</button>
@@ -213,19 +384,32 @@ function showFinalButtons() {
     });
 
     document.getElementById('restartBtn').addEventListener('click', () => {
-        trainingDescriptors = [];
-        trainingImageURLs = [];
-        trainingBoxes.forEach(box => box.innerHTML = "Training Image");
+        referenceDescriptors = [];
+        referenceImageURLs = [];
+        referenceBoxes.forEach(box => box.innerHTML = "Reference Image");
         testBox.innerHTML = "Test Image";
-        messageEl.innerText = "Please take a training image.";
+        messageEl.innerText = "Please take a reference image.";
         document.getElementById('controls').innerHTML = '<button id="captureBtn">Take a Picture!</button>';
         document.getElementById('captureBtn').addEventListener('click', async () => captureBtn.click());
     });
 }
 
-window.addEventListener('load', async () => {
-    await loadModels();
-    startVideo();
-});</script>
+async function warmUpModel() {
+  // Wait a short moment to allow the camera to adjust (e.g., 1-2 seconds)
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  // Capture a frame from the video feed
+  const canvas = await captureImage();
+
+  // Perform a dummy detection; if no face is detected, that's okay
+  await faceapi
+    .detectSingleFace(canvas, new faceapi.SsdMobilenetv1Options())
+    .withFaceLandmarks()
+    .withFaceDescriptor();
+  
+  console.log("Model warmed up with a real frame");
+}
+
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </body>
 </html>
