@@ -1,6 +1,7 @@
-let referenceDescriptors = []; 
-let referenceImageURLs = []; 
+let referenceDescriptors = []; // for evaluating images (storing embeddings)
+let referenceImageURLs = []; // for displaying images
 
+// Recommended threshold
 const THRESHOLD = 0.5;
 
 const video = document.getElementById('live-stream');
@@ -13,14 +14,6 @@ const referenceBoxes = [
 ];
 const testBox = document.getElementById('testBox');
 const title = document.getElementById('title');
-
-/*
-// Math for normalizing a vector
-function normalizeDescriptor(descriptor) {
-    const norm = Math.sqrt(descriptor.reduce((sum, val) => sum + val * val, 0));
-    return Float32Array.from(descriptor, val => val / norm);
-}
-*/
 
 //face-api.js
 async function loadModels() {
@@ -93,8 +86,7 @@ captureBtn.addEventListener('click', async () => {
     }
 
 
-    // Normalize the face descriptor for consistent comparisons (able to scale).
-    //const normalizedDescriptor = normalizeDescriptor(detection.descriptor);
+    // Generated normalized face descriptor for consistent comparisons (able to scale).
     const normalizedDescriptor = detection.descriptor;
     const dataURL = canvas.toDataURL('image/jpeg');
 
@@ -150,7 +142,7 @@ captureBtn.addEventListener('click', async () => {
 });
 
 function launchConfetti() {
-    const duration = 3 * 1000; // 5 seconds
+    const duration = 3 * 1000; // 3 seconds
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000, scalar: 5};
   
@@ -172,15 +164,7 @@ function launchConfetti() {
     }, 250);
   }
 
-window.addEventListener('load', async () => {
-    await loadModels();
-
-    startVideo();
-    await warmUpModel();
-
-});
-
-// When game is over, offer retry and restart buttons. 
+// When game is over, offer retry and restart buttons. Reset appropriate vars.
 function showFinalButtons() {
     document.getElementById('controls').innerHTML = `
         <button id="retryBtn">Retry</button>
@@ -205,8 +189,9 @@ function showFinalButtons() {
     });
 }
 
+// To fix a bug where the first picture generates an inaccurate descriptor.
 async function warmUpModel() {
-  // Wait a short moment to allow the camera to adjust (e.g., 1-2 seconds)
+  // Wait a short moment to allow the camera to adjust
   await new Promise(resolve => setTimeout(resolve, 2000));
   // Capture a frame from the video feed
   const canvas = await captureImage();
@@ -219,3 +204,12 @@ async function warmUpModel() {
   
   console.log("Model warmed up with a real frame");
 }
+
+// When the webpage loads, it: loads models, starts video, and warms up the models
+window.addEventListener('load', async () => {
+    await loadModels();
+
+    startVideo();
+    await warmUpModel();
+
+});
