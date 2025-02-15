@@ -12,7 +12,7 @@ In the web_ver folder, main.js holds the actual code logic, and index.html const
 **Components**  
 Programming Language: Javascript  
 
-**Good Resources I Used for this Project**
-Face API Documentation: https://justadudewhohacks.github.io/face-api.js/docs/index.html 
-Face API Starter Guide: https://itnext.io/face-api-js-javascript-api-for-face-recognition-in-the-browser-with-tensorflow-js-bcc2a6c4cf07
-Article on HTML Live Video Feed: https://srivastavayushmaan1347.medium.com/how-to-access-and-live-stream-camera-using-javascript-210e1b9a739d
+**Good Resources I Used for this Project**  
+Face API Documentation: https://justadudewhohacks.github.io/face-api.js/docs/index.html  
+Face API Starter Guide: https://itnext.io/face-api-js-javascript-api-for-face-recognition-in-the-browser-with-tensorflow-js-bcc2a6c4cf07  
+Article on HTML Live Video Feed: https://srivastavayushmaan1347.medium.com/how-to-access-and-live-stream-camera-using-javascript-210e1b9a739d  
