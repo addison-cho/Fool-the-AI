@@ -1,5 +1,3 @@
-See web_ver folder. face_reg folder is not updated.
-
 **Fool the AI**  
 Fool the AI is an interactive AI-powered game. Built using models built through Tensorflow (thanks face-api.js) the game challenges participants to outsmart the AI by altering their appearance or expressions. It demonstrates the capabilities and limitations of facial recognition.  
 
