@@ -5,7 +5,7 @@ Fool the AI is an interactive AI-powered game. Built using models built through 
 The game prompts the user to take four photos: three to use as reference, and one which the AI will use to try to recognize your face. The AI evaluates this based by calculating the distance between embeddings (vectors that represent the inputted faces) for each training photo and going with majority decision. Since we're using Euclidean distances with normalized vectors (magnitude of one), our range is from 0 to 2. The greater the score, the greater the differences between embeddings, and therefore the faces. The current threshold for this project is set at 0.5. Anything above is considered a different face by the AI.  
 
 **File Breakdown**  
-In the web_ver folder, main.js holds the actual code logic, and index.html constructs the interface. website.html is the exact code used in the Vision 1948 website, though unpublished and inaccessible at the moment.
+In the web_ver folder, main.js holds the actual code logic, and index.html constructs the interface. website.html is the exact code used in the Vision 1948 website, combining main.js and index.html into one file.
 
 **Components**  
 Programming Language: Javascript  
